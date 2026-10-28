@@ -1,0 +1,267 @@
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    .invoice-preview {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #fff;
+        padding: 20px 24px;
+        position: relative;
+        color: #333;
+    }
+
+    /* ── Header ── */
+    .pdf-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .pdf-logo {
+        width: 90px;
+        height: 90px;
+        flex-shrink: 0;
+    }
+
+    .pdf-header-right {
+        text-align: right;
+        line-height: 1.4;
+    }
+
+    .pdf-company-name {
+        font-size: 19px;
+        font-weight: 900;
+        color: #C9A84C;
+        letter-spacing: 1px;
+    }
+
+    .pdf-art-mdf {
+        font-size: 14px;
+        font-style: italic;
+        font-weight: 400;
+        color: #C9A84C;
+        font-family: 'Georgia', 'Times New Roman', serif;
+    }
+
+    .pdf-address {
+        font-size: 9px;
+        color: #555;
+        margin-top: 4px;
+    }
+
+    .pdf-client {
+        font-size: 9px;
+        font-weight: bold;
+        color: #333;
+        margin-top: 3px;
+    }
+
+    /* ── Title ── */
+    .pdf-title {
+        text-align: center;
+        margin: 12px 0 6px;
+    }
+
+    .pdf-title h2 {
+        font-size: 17px;
+        font-weight: bold;
+        color: #333;
+        letter-spacing: 2px;
+        margin-bottom: 4px;
+    }
+
+    .pdf-title-underline {
+        width: 55px;
+        height: 2.5px;
+        background: #C9A84C;
+        margin: 0 auto;
+    }
+
+    /* ── Date ── */
+    .pdf-date {
+        text-align: right;
+        font-size: 10px;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    /* ── Table ── */
+    .pdf-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+        font-weight: bold;
+        margin-bottom: 0;
+    }
+
+    .pdf-table th {
+        background: #f0f0f0;
+        border: 1px solid #000;
+        padding: 6px 4px;
+        text-align: center;
+        font-size: 10px;
+    }
+
+    .pdf-table th:first-child { text-align: left; }
+
+    .pdf-table td {
+        border: 1px solid #000;
+        padding: 5px 4px;
+        text-align: center;
+    }
+
+    .pdf-table td:first-child { text-align: left; }
+
+    .pdf-table .col-desc   { width: 40%; }
+    .pdf-table .col-qty    { width: 15%; }
+    .pdf-table .col-price  { width: 24%; }
+    .pdf-table .col-amount { width: 21%; }
+
+    /* ── Totals (outside table, right-aligned) ── */
+    .pdf-totals {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 8px;
+    }
+
+    .pdf-totals-grid {
+        width: 45%;
+    }
+
+    .pdf-totals-row {
+        display: flex;
+    }
+
+    .pdf-totals-row td {
+        border: 1px solid #000;
+        padding: 6px 4px;
+        text-align: center;
+        font-size: 11px;
+        font-weight: bold;
+        background: #f0f0f0;
+        color: #333;
+    }
+
+    .pdf-totals-row.totals-final td {
+        color: #C9A84C;
+        font-size: 13px;
+    }
+
+    .pdf-totals-label { width: 53.3%; }
+    .pdf-totals-value { width: 46.7%; }
+
+    /* ── Footer ── */
+    .pdf-footer {
+        margin-top: 24px;
+        padding-top: 8px;
+        border-top: 1px solid #c8c8c8;
+        display: flex;
+        justify-content: space-between;
+        font-size: 8px;
+        color: #888;
+        text-align: center;
+    }
+
+    .pdf-footer span { flex: 1; }
+
+    .pdf-footer .footer-page {
+        color: #333;
+    }
+
+    @media print {
+        body { background: #fff; }
+        .invoice-preview { padding: 15mm; }
+        .pdf-table th, .pdf-table td,
+        .pdf-totals-row td {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+</style>
+
+<div class="invoice-preview">
+
+    {# ── Header: logo left, company + address + client right-aligned ── #}
+    <div class="pdf-header">
+        <img class="pdf-logo" src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        <div class="pdf-header-right">
+            <div class="pdf-company-name">COCINA ESPAÑOLA</div>
+            <div class="pdf-art-mdf">Art MDF</div>
+            <div class="pdf-address">Rue Tange Center Al hirafiyin N 25</div>
+            <div class="pdf-address">Imzouren AL Hoceima</div>
+            <div class="pdf-client">Client: {{ data.client_name }}</div>
+        </div>
+    </div>
+
+    {# ── Title ── #}
+    <div class="pdf-title">
+        <h2>FACTURE{% if data.get('show_facture_num') and data.get('invoice_num') %} N° {{ data.invoice_num }}{% endif %}</h2>
+        <div class="pdf-title-underline"></div>
+    </div>
+
+    {# ── Date ── #}
+    <div class="pdf-date">Date de facture: {{ data.date }}</div>
+
+    {# ── Items table ── #}
+    {% set total    = data.get('total', 0) %}
+    {% set remise   = data.get('remise', 0) %}
+    {% set payer    = data.get('payer', 0) %}
+    {% set net_total = data.get('net_total', total) %}
+
+    <table class="pdf-table">
+        <thead>
+            <tr>
+                <th class="col-desc">Description</th>
+                <th class="col-qty">Quantité</th>
+                <th class="col-price">Prix DH</th>
+                <th class="col-amount">Montant DH</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in data.get('items', []) %}
+            <tr>
+                <td>{{ item.description }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.unit_price | format_price }} DH</td>
+                <td>{{ item.total | format_price }} DH</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {# ── Totals section (outside table, right-aligned to last 2 cols) ── #}
+    <div class="pdf-totals">
+        <table class="pdf-totals-grid">
+            {% if remise > 0 or payer > 0 %}
+            <tr class="pdf-totals-row">
+                <td class="pdf-totals-label">Total en DH</td>
+                <td class="pdf-totals-value">{{ total | format_price }} DH</td>
+            </tr>
+            {% endif %}
+            {% if remise > 0 %}
+            <tr class="pdf-totals-row">
+                <td class="pdf-totals-label">Remise en DH</td>
+                <td class="pdf-totals-value">-{{ remise | format_price }} DH</td>
+            </tr>
+            {% endif %}
+            {% if payer > 0 %}
+            <tr class="pdf-totals-row">
+                <td class="pdf-totals-label">Payer en DH</td>
+                <td class="pdf-totals-value">-{{ payer | format_price }} DH</td>
+            </tr>
+            {% endif %}
+            <tr class="pdf-totals-row totals-final">
+                <td class="pdf-totals-label">Total a Payer en DH</td>
+                <td class="pdf-totals-value">{{ net_total | format_price }} DH</td>
+            </tr>
+        </table>
+    </div>
+
+    {# ── Footer ── #}
+    <div class="pdf-footer">
+        <span>Rue Tange Center Al hirafiyin N 25<br>Imzouren AL Hoceima</span>
+        <span>Tél: +212 6 71 68 75 98</span>
+        <span>Instagram: cocinaespanola</span>
+    </div>
+
+</div>
