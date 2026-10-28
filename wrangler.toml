@@ -1,0 +1,25 @@
+name = "invoiceapp"
+main = "_worker.py"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["python_workers"]
+
+# ──────────────────────────────────────────────
+# Cloudflare Hyperdrive — proxies your Supabase
+# PostgreSQL connection to the Worker via TCP.
+#
+# After running:
+#   wrangler hyperdrive create invoiceapp-db \
+#     --connection-string="postgresql://USER:PASS@HOST:PORT/DBNAME"
+#
+# Replace the placeholder id below with the one printed.
+# ──────────────────────────────────────────────
+[[hyperdrive]]
+binding = "HYPERDRIVE"
+id = "REPLACE_WITH_YOUR_HYPERDRIVE_ID"
+
+# ──────────────────────────────────────────────
+# Environment variables (non-secret).
+# Set secrets via:  wrangler secret put SECRET_KEY
+# ──────────────────────────────────────────────
+[vars]
+FLASK_CONFIG = "production"
