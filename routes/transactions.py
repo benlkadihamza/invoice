@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required
 from models import db, Transaction, Person, PaymentMethod, TransactionDescription
 from forms import TransactionForm
-from werkzeug.utils import secure_filename
 from datetime import date
-import os, uuid
+import uuid
+
+import storage
 
 transactions_bp = Blueprint('transactions', __name__)
 
@@ -110,7 +111,7 @@ def add():
             if form.receipt.data:
                 ext = form.receipt.data.filename.rsplit('.', 1)[1].lower()
                 receipt_filename = f"{uuid.uuid4().hex}.{ext}"
-                form.receipt.data.save(os.path.join(current_app.config['UPLOAD_FOLDER'], receipt_filename))
+                storage.save_upload(form.receipt.data, f"receipts/{receipt_filename}")
 
             income_val = form.income.data or 0.0
             expense_val = form.expense.data or 0.0
@@ -155,10 +156,11 @@ def edit(id):
 
     if form.validate_on_submit():
         try:
+            old_receipt = t.receipt_image
             if form.receipt.data:
                 ext = form.receipt.data.filename.rsplit('.', 1)[1].lower()
                 receipt_filename = f"{uuid.uuid4().hex}.{ext}"
-                form.receipt.data.save(os.path.join(current_app.config['UPLOAD_FOLDER'], receipt_filename))
+                storage.save_upload(form.receipt.data, f"receipts/{receipt_filename}")
                 t.receipt_image = receipt_filename
 
             income_val = form.income.data or 0.0
@@ -173,6 +175,11 @@ def edit(id):
             t.expense = expense_val
 
             db.session.commit()
+            if old_receipt and old_receipt != t.receipt_image:
+                try:
+                    storage.delete_object(f"receipts/{old_receipt}")
+                except storage.StorageError:
+                    pass
             flash('Transaction modifiée avec succès.', 'success')
             return redirect(url_for('transactions.index'))
         except Exception as e:
@@ -215,9 +222,10 @@ def delete(id):
     t = Transaction.query.get_or_404(id)
     try:
         if t.receipt_image:
-            path = os.path.join(current_app.config['UPLOAD_FOLDER'], t.receipt_image)
-            if os.path.exists(path):
-                os.remove(path)
+            try:
+                storage.delete_object(f"receipts/{t.receipt_image}")
+            except storage.StorageError:
+                pass
         db.session.delete(t)
         db.session.commit()
         flash('Transaction supprimée.', 'success')

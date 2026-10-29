@@ -23,3 +23,7 @@ id = "REPLACE_WITH_YOUR_HYPERDRIVE_ID"
 # ──────────────────────────────────────────────
 [vars]
 FLASK_CONFIG = "production"
+AWS_ENDPOINT_URL_S3 = "https://br-withered-dawn-ayevj5p8.storage.c-5.us-east-2.aws.neon.tech"
+AWS_REGION = "us-east-2"
+AWS_S3_BUCKET = "invoice-uploads"
+AWS_S3_FORCE_PATH_STYLE = "true"

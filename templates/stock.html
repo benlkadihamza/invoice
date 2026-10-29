@@ -68,7 +68,7 @@
                 <tr class="{% if p.stock_quantity == 0 %}table-danger{% elif p.stock_quantity <= 5 %}table-warning{% endif %}">
                     <td>
                         {% if p.photo %}
-                        <img src="{{ url_for('static', filename='uploads/products/' + p.photo) }}" class="rounded" style="width: 50px; height: 50px; object-fit: cover;" alt="{{ p.title }}">
+                        <img src="{{ url_for('media.serve', key='products/' + p.photo) }}" class="rounded" style="width: 50px; height: 50px; object-fit: cover;" alt="{{ p.title }}">
                         {% else %}
                         <div class="bg-light rounded d-flex align-items-center justify-content-center text-muted" style="width: 50px; height: 50px;">
                             <i class="bi bi-box fs-4"></i>
@@ -215,7 +215,7 @@
         document.getElementById('edit-photo').value = '';
         const preview = document.getElementById('edit-photo-preview');
         if (photo) {
-            preview.src = "{{ url_for('static', filename='uploads/products/') }}" + photo;
+            preview.src = "{{ url_for('media.serve', key='products/') }}" + photo;
             preview.style.display = 'block';
         } else {
             preview.style.display = 'none';

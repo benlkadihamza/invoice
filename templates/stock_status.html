@@ -79,7 +79,7 @@
                 <tr class="row-{{ row.status_class }}" data-status="{{ row.status_class }}" data-title="{{ row.title|lower }}" data-stock="{{ row.stock_quantity }}" data-updated="{{ row.updated_at }}">
                     <td>
                         {% if row.photo %}
-                        <img src="{{ url_for('static', filename='uploads/products/' + row.photo) }}" class="rounded" style="width: 45px; height: 45px; object-fit: cover;" alt="{{ row.title }}">
+                        <img src="{{ url_for('media.serve', key='products/' + row.photo) }}" class="rounded" style="width: 45px; height: 45px; object-fit: cover;" alt="{{ row.title }}">
                         {% else %}
                         <div class="bg-light rounded d-flex align-items-center justify-content-center text-muted" style="width: 45px; height: 45px;">
                             <i class="bi bi-box"></i>

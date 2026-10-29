@@ -25,6 +25,19 @@ def _init_app(env):
     if hasattr(env, "SECRET_KEY"):
         os.environ["SECRET_KEY"] = env.SECRET_KEY
 
+    # Object storage configuration (vars and secrets).
+    for name in (
+        "AWS_ENDPOINT_URL_S3",
+        "AWS_REGION",
+        "AWS_S3_BUCKET",
+        "AWS_S3_FORCE_PATH_STYLE",
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY",
+    ):
+        value = getattr(env, name, None)
+        if value:
+            os.environ[name] = str(value)
+
     os.environ.setdefault("FLASK_CONFIG", "production")
 
     from app import create_app

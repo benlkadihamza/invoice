@@ -3,12 +3,14 @@ import uuid
 import tempfile
 from datetime import datetime
 from io import BytesIO
-from flask import Blueprint, render_template, request, jsonify, send_file, current_app
+from flask import Blueprint, render_template, request, jsonify, send_file
 from flask_login import login_required
 from fpdf import FPDF
 import openpyxl
 from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
 from models import db, Product, StockHistory
+
+import storage
 
 stock_bp = Blueprint('stock', __name__, url_prefix='/stock')
 
@@ -23,12 +25,6 @@ MID_GRAY = (85, 85, 85)
 
 def allowed_image(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-def get_upload_folder():
-    folder = os.path.join(current_app.static_folder, "uploads", "products")
-    os.makedirs(folder, exist_ok=True)
-    return folder
 
 
 def stock_status_from_db(products):
@@ -126,8 +122,7 @@ def stock_add_product():
             if f.filename and allowed_image(f.filename):
                 ext = f.filename.rsplit(".", 1)[1].lower()
                 filename = f"{uuid.uuid4().hex}.{ext}"
-                upload_folder = get_upload_folder()
-                f.save(os.path.join(upload_folder, filename))
+                storage.save_upload(f, f"products/{filename}")
                 photo = filename
         product = Product(title=title, photo=photo, stock_quantity=0)
         db.session.add(product)
@@ -154,21 +149,22 @@ def stock_edit_product(product_id):
     if existing:
         return jsonify({"error": "Un produit avec ce nom existe déjà."}), 400
     try:
-        upload_folder = get_upload_folder()
+        old_photo = product.photo
         if "photo" in request.files:
             f = request.files["photo"]
             if f.filename and allowed_image(f.filename):
                 ext = f.filename.rsplit(".", 1)[1].lower()
                 filename = f"{uuid.uuid4().hex}.{ext}"
-                f.save(os.path.join(upload_folder, filename))
-                if product.photo:
-                    old_path = os.path.join(upload_folder, product.photo)
-                    if os.path.exists(old_path):
-                        os.remove(old_path)
+                storage.save_upload(f, f"products/{filename}")
                 product.photo = filename
         product.title = title
         product.updated_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         db.session.commit()
+        if old_photo and old_photo != product.photo:
+            try:
+                storage.delete_object(f"products/{old_photo}")
+            except storage.StorageError:
+                pass
         return jsonify({"success": True})
     except Exception as e:
         db.session.rollback()
@@ -183,11 +179,11 @@ def stock_delete_product(product_id):
     if not product:
         return jsonify({"error": "Produit non trouvé."}), 404
     try:
-        upload_folder = get_upload_folder()
         if product.photo:
-            photo_path = os.path.join(upload_folder, product.photo)
-            if os.path.exists(photo_path):
-                os.remove(photo_path)
+            try:
+                storage.delete_object(f"products/{product.photo}")
+            except storage.StorageError:
+                pass
         StockHistory.query.filter_by(product_id=product_id).delete()
         db.session.delete(product)
         db.session.commit()
