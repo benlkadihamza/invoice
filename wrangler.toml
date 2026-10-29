@@ -13,9 +13,16 @@ compatibility_flags = ["python_workers"]
 #
 # Replace the placeholder id below with the one printed.
 # ──────────────────────────────────────────────
-[[hyperdrive]]
-binding = "HYPERDRIVE"
-id = "REPLACE_WITH_YOUR_HYPERDRIVE_ID"
+{
+  // ...
+  "hyperdrive": [
+    {
+      "binding": "postgres",
+      "id": "b92c5ccc296c48eda077f796b9fe7f6b"
+    }
+  ],
+  // ...
+}
 
 # ──────────────────────────────────────────────
 # Environment variables (non-secret).
