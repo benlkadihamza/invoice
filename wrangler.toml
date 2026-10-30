@@ -1,3 +1,5 @@
 name = "invoiceapp-spa"
-pages_build_output_dir = "frontend-spa"
 compatibility_date = "2024-01-01"
+
+[assets]
+directory = "./frontend-spa"
