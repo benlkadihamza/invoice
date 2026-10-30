@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\Users\\LENOVO\\Desktop\\test\\anti\\invoice\\invoiceapp-main\\.archify\\architecture-invoiceapp-20261030-184000\\candidate.json",
+    "sha256": "1ba8954f4cfa9b27835d3118385ac45aad5acf8c771014d3d8f01001843616a9",
+    "bytes": 5006
+  },
+  "artifact": {
+    "path": "C:\\Users\\LENOVO\\Desktop\\test\\anti\\invoice\\invoiceapp-main\\.archify\\architecture-invoiceapp-20261030-184000\\invoiceapp-architecture.html",
+    "sha256": "643ebd4d5bdbdbf1c9fd52eb8accb1c6a09aeedc9a480a7a9b84ffec81e6f11a",
+    "bytes": 850419
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\Users\\LENOVO\\Desktop\\test\\anti\\invoice\\invoiceapp-main\\.archify\\architecture-invoiceapp-20261030-184000\\invoiceapp-architecture.finalize.json",
+    "summaryReceipt": "C:\\Users\\LENOVO\\Desktop\\test\\anti\\invoice\\invoiceapp-main\\.archify\\architecture-invoiceapp-20261030-184000\\invoiceapp-architecture.finalize-summary.json",
+    "browserCheckReceipt": "C:\\Users\\LENOVO\\Desktop\\test\\anti\\invoice\\invoiceapp-main\\.archify\\architecture-invoiceapp-20261030-184000\\invoiceapp-architecture.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-30T18:29:03.970Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 5760,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  },
+  "visualReviewRecommendation": {
+    "action": "inspect-route-readability",
+    "signals": {
+      "routesOverSuggestedBends": 1
+    },
+    "reason": "Automated gates passed, but crossings or detours still need perceptual review before claiming visual quality.",
+    "affectedRoutes": {
+      "crossings": [],
+      "detours": [
+        {
+          "relationship": {
+            "id": "flask-invoices",
+            "from": "flask_app",
+            "to": "invoices_bp",
+            "label": "/invoices",
+            "collectionIndex": 3,
+            "artifactIndex": 4
+          },
+          "bends": 3,
+          "stretch": 1
+        }
+      ],
+      "truncated": false
+    },
+    "hints": [
+      "flask_app → invoices_bp needs 3 bends: move node flask_app or invoices_bp so they share a row or column with matching centers, or sit diagonally with a clear corner."
+    ],
+    "repair": "Trace these relationships at the desktop viewport. For Architecture, use references/architecture-layout-repair.md: reflow a blocked main path or tangled connected scene, and repair an isolated defect locally only when the surrounding composition is accepted. Preserve all semantic content and user-fixed geometry. Rerun finalize once after the edit."
+  }
+}

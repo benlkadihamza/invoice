@@ -10,7 +10,6 @@ from routes.invoices import invoices_bp
 from routes.stock import stock_bp
 from routes.payments import payments_bp
 from routes.settings import settings_bp
-from routes.media import media_bp
 
 
 def register_blueprints(app):
@@ -26,5 +25,4 @@ def register_blueprints(app):
     app.register_blueprint(stock_bp)
     app.register_blueprint(payments_bp)
     app.register_blueprint(settings_bp)
-    app.register_blueprint(media_bp)
 

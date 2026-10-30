@@ -5,10 +5,9 @@ Flask-WTF==1.2.1
 Flask-Migrate==4.0.5
 WTForms==3.1.1
 email-validator==2.1.0
-# psycopg2-binary removed — C extension, not supported in Cloudflare Workers Python.
-# psycopg (pure-Python v3) is used instead; Hyperdrive provides the TCP proxy.
-psycopg>=3.1.0
-# gunicorn removed — Cloudflare Workers has its own runtime, no process server needed.
+psycopg2-binary==2.9.9
+psycopg[binary]>=3.1.0
+gunicorn==21.2.0
 FPDF2==2.7.6
 openpyxl==3.1.2
 Werkzeug==3.0.1

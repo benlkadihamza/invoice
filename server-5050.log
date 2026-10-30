@@ -1,0 +1,18 @@
+==================================================
+ACTIVE CONFIG:
+DevelopmentConfig
+
+DATABASE URL:
+sqlite:///C:\Users\LENOVO\Desktop\test\anti\invoice\invoiceapp-main\database\app.db
+
+DATABASE ENGINE:
+sqlite
+
+HOST:
+None
+
+DATABASE:
+sqlite:///C:\Users\LENOVO\Desktop\test\anti\invoice\invoiceapp-main\database\app.db
+==================================================
+ * Serving Flask app 'app'
+ * Debug mode: off

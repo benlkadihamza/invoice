@@ -99,8 +99,6 @@ class Invoice(db.Model):
     date = db.Column(db.String, nullable=False, default="")
     client_name = db.Column(db.String, nullable=False, default="")
     client_address = db.Column(db.String, nullable=False, default="")
-    client_address_details = db.Column(db.String, nullable=False, default="")
-    client_phone = db.Column(db.String, nullable=False, default="")
     total = db.Column(db.Float, nullable=False, default=0.0)
     remise = db.Column(db.Float, nullable=False, default=0.0)
     payer = db.Column(db.Float, nullable=False, default=0.0)

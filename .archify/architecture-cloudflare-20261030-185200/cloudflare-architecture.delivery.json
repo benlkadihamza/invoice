@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "33483a68-27e7-455a-9c48-3365a1aa3ca0",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\LENOVO\\Desktop\\test\\anti\\invoice\\invoiceapp-main\\.archify\\architecture-cloudflare-20261030-185200\\candidate.json",
+  "output": "C:\\Users\\LENOVO\\Desktop\\test\\anti\\invoice\\invoiceapp-main\\.archify\\architecture-cloudflare-20261030-185200\\cloudflare-architecture.html",
+  "specification": {
+    "sha256": "6dc20985b89d2a6e85520c59fbc3e615716210e92be1e85ea77516b6be0ec00c",
+    "bytes": 4464
+  },
+  "artifact": {
+    "sha256": "9c99076fa8ef8ea1a638411b062520ff3ba308908e62cab950542de84236a677",
+    "bytes": 846644
+  }
+}

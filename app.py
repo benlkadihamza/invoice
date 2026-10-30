@@ -6,7 +6,7 @@ from flask_wtf.csrf import CSRFProtect
 from models import db, User
 from config import config
 from routes import register_blueprints
-from utils import format_price, waze_url
+from utils import format_price
 
 
 def _mask_url(url_str):
@@ -32,16 +32,9 @@ def create_app(config_name=None):
     masked_uri = _mask_url(uri)
     engine_name = 'postgresql' if uri.startswith('postgresql') else ('sqlite' if uri.startswith('sqlite') else 'unknown')
 
-    # On Cloudflare Workers there is no writable filesystem; skip silently.
-    for _dir in [
-        app.config['UPLOAD_FOLDER'],
-        app.config['REPORT_FOLDER'],
-        os.path.join(app.root_path, 'database'),
-    ]:
-        try:
-            os.makedirs(_dir, exist_ok=True)
-        except (OSError, NotImplementedError):
-            pass
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    os.makedirs(app.config['REPORT_FOLDER'], exist_ok=True)
+    os.makedirs(os.path.join(app.root_path, 'database'), exist_ok=True)
 
     db.init_app(app)
     csrf = CSRFProtect(app)
@@ -58,8 +51,6 @@ def create_app(config_name=None):
 
     app.jinja_env.filters['format_price'] = format_price
     app.jinja_env.globals['format_price'] = format_price
-    app.jinja_env.filters['waze_url'] = waze_url
-    app.jinja_env.globals['waze_url'] = waze_url
 
     @app.context_processor
     def inject_globals():
@@ -126,29 +117,6 @@ def create_app(config_name=None):
                             conn.execute(text("ALTER TABLE transaction_descriptions ADD COLUMN position INTEGER DEFAULT 0"))
                     except Exception as ex_col:
                         print("MIGRATION WARNING (transaction_descriptions.position):", ex_col)
-
-            if 'invoices' in table_names:
-                columns = [c['name'] for c in inspector.get_columns('invoices')]
-                if 'client_address' not in columns:
-                    try:
-                        with db.engine.begin() as conn:
-                            conn.execute(text("ALTER TABLE invoices ADD COLUMN client_address VARCHAR DEFAULT ''"))
-                    except Exception as ex_col:
-                        print("MIGRATION WARNING (invoices.client_address):", ex_col)
-
-                if 'client_phone' not in columns:
-                    try:
-                        with db.engine.begin() as conn:
-                            conn.execute(text("ALTER TABLE invoices ADD COLUMN client_phone VARCHAR DEFAULT ''"))
-                    except Exception as ex_col:
-                        print("MIGRATION WARNING (invoices.client_phone):", ex_col)
-
-                if 'client_address_details' not in columns:
-                    try:
-                        with db.engine.begin() as conn:
-                            conn.execute(text("ALTER TABLE invoices ADD COLUMN client_address_details VARCHAR DEFAULT ''"))
-                    except Exception as ex_col:
-                        print("MIGRATION WARNING (invoices.client_address_details):", ex_col)
 
             _seed_defaults()
         except Exception as e:

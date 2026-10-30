@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Cloudflare Pages Rebuilt Architecture",
+    "output": ".archify/architecture-cloudflare-20261030-185200/cloudflare-architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "users",
+      "type": "external",
+      "label": "User Clients",
+      "sublabel": "Desktop / Mobile Browsers",
+      "pos": [40, 190],
+      "size": [130, 60]
+    },
+    {
+      "id": "cf_edge",
+      "type": "cloud",
+      "label": "Cloudflare Global CDN",
+      "sublabel": "Anycast Edge & SSL",
+      "tag": "Cloudflare Pages",
+      "pos": [230, 190],
+      "size": [150, 60]
+    },
+    {
+      "id": "spa_app",
+      "type": "frontend",
+      "label": "InvoiceApp SPA",
+      "sublabel": "Tailwind & Lucide UI",
+      "tag": "frontend-spa/index.html",
+      "pos": [440, 190],
+      "size": [150, 60]
+    },
+    {
+      "id": "ui_system",
+      "type": "frontend",
+      "label": "UI/UX Pro Max System",
+      "sublabel": "IBM Plex & Minimalist Trust",
+      "tag": "Design System",
+      "pos": [440, 50],
+      "size": [150, 64]
+    },
+    {
+      "id": "client_pdf",
+      "type": "backend",
+      "label": "Client PDF Engine",
+      "sublabel": "jsPDF & autoTable",
+      "tag": "frontend-spa/app.js",
+      "pos": [660, 70],
+      "size": [150, 60]
+    },
+    {
+      "id": "state_engine",
+      "type": "backend",
+      "label": "Reactive State Store",
+      "sublabel": "Invoicing & Stock Logic",
+      "tag": "LocalStorage / IndexedDB",
+      "pos": [660, 190],
+      "size": [150, 60]
+    },
+    {
+      "id": "api_bridge",
+      "type": "backend",
+      "label": "REST Sync Bridge",
+      "sublabel": "External Backend / Worker",
+      "tag": "Configurable API",
+      "pos": [660, 310],
+      "size": [150, 60]
+    },
+    {
+      "id": "cloud_store",
+      "type": "database",
+      "label": "External Database",
+      "sublabel": "Postgres / D1 / Supabase",
+      "tag": "Persistent Sync",
+      "pos": [880, 310],
+      "size": [150, 60]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "security-group",
+      "label": "Cloudflare Pages Edge & Browser Runtime",
+      "wraps": ["cf_edge", "spa_app", "ui_system", "client_pdf", "state_engine", "api_bridge"]
+    },
+    {
+      "kind": "region",
+      "label": "External Persistence",
+      "wraps": ["cloud_store"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "users-cf",
+      "from": "users",
+      "to": "cf_edge",
+      "label": "HTTPS / Edge Anycast",
+      "variant": "emphasis"
+    },
+    {
+      "id": "cf-spa",
+      "from": "cf_edge",
+      "to": "spa_app",
+      "label": "Serves Assets"
+    },
+    {
+      "id": "ui-spa",
+      "from": "ui_system",
+      "to": "spa_app",
+      "label": "Design tokens",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "spa-pdf",
+      "from": "spa_app",
+      "to": "client_pdf",
+      "label": "Generate Invoices"
+    },
+    {
+      "id": "spa-state",
+      "from": "spa_app",
+      "to": "state_engine",
+      "label": "CRUD Actions",
+      "variant": "emphasis"
+    },
+    {
+      "id": "spa-bridge",
+      "from": "spa_app",
+      "to": "api_bridge",
+      "label": "Optional Sync",
+      "variant": "dashed"
+    },
+    {
+      "id": "bridge-cloud",
+      "from": "api_bridge",
+      "to": "cloud_store",
+      "label": "JSON REST / GraphQL",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Cloudflare Edge Delivery",
+      "items": [
+        "Single-Page Application hosted at Cloudflare Pages CDN",
+        "Sub-50ms global TTFB with Anycast routing and automatic Brotli/Gzip",
+        "_redirects and _headers configured for SPA routing and asset caching"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Design & UX Intelligence",
+      "items": [
+        "UI/UX Pro Max Minimalist Trust Financial Palette (#1E3A5F / #059669)",
+        "IBM Plex Sans professional typography with 4.5:1 WCAG AA contrast",
+        "Lucide SVG icons and responsive mobile-first views"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Client-Side Processing & Sync",
+      "items": [
+        "In-browser instant PDF invoice & summary report generation via jsPDF",
+        "Zero-latency reactive data store with LocalStorage persistence",
+        "JSON/CSV backup import/export and optional external REST backend hook"
+      ]
+    }
+  ]
+}
