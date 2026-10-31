@@ -1,0 +1,16 @@
+{
+  "name": "invoiceapp-cloudflare",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:frontend": "npm run --prefix frontend build",
+    "build:worker": "npm run --prefix worker cf-typegen",
+    "build": "npm run build:frontend",
+    "dev:worker": "npm run --prefix worker dev",
+    "dev:frontend": "npm run --prefix frontend dev",
+    "deploy": "npm run build:frontend && cd worker && npx wrangler deploy",
+    "secret:db": "cd worker && npx wrangler secret put DATABASE_URL",
+    "secret:jwt": "cd worker && npx wrangler secret put JWT_SECRET",
+    "r2:create": "npx wrangler r2 bucket create invoiceapp-uploads"
+  }
+}
